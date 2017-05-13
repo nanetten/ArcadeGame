@@ -134,8 +134,8 @@ var Engine = (function(global) {
                 ctx.drawImage(Resources.get(rowImages[row]), col * 101, row * 83);
             }
         }
-        ctx.clearRect(195, 35, 150, -40);
-        score();
+        ctx.clearRect(195, 35, 150, -40); // Clear score
+        score(); // Draw score
         renderEntities();
     }
 

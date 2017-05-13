@@ -10,7 +10,7 @@ function reset() {
     player.x = 202;
     player.y = 384.75;
 }
-
+// Draws the score
 function score() {
     ctx.font = "Bold 35px 'Ravi Prakash', cursive";
     ctx.fillStyle = '#5dbc25';
@@ -32,7 +32,7 @@ Enemy.prototype.update = function(dt) {
     if (dt < 1) { // Fix for rare bug that happens when you are in other tabs
         this.x += this.move * dt;
     }
-    if (this.x > 505) {
+    if (this.x > 505) { // Resets enemy position when its out of boundary
         this.x = -100;
     }
 
@@ -58,10 +58,11 @@ var Player = function() {
 };
 
 Player.prototype.update = function(dt) {
-    if (this.y < 0) {
+    if (this.y < 0) { // Reset player position when it reaches the water
         reset();
-        scr += 1
+        scr += 1 // Score value update
     }
+    // Set player position to previous position whenever it tries to get out boundaries
     if (this.x < 0) {
         this.x = this.x + 101;
     }
@@ -77,8 +78,8 @@ Player.prototype.render = function() {
 };
 
 Player.prototype.handleInput = function(keys) {
-    var mY = 85.5;
-    var mX = 101;
+    var mY = 85.5; // Player movement through x coordinates
+    var mX = 101; // Player movement through y coordinates
     switch (keys) {
         case 'left':
             this.x -= mX;
