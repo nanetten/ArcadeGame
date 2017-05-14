@@ -1,3 +1,4 @@
+"use strict";
 var scr = 0; // Score value
 // Simple function to determine the speed
 function movX(speed) {
@@ -6,10 +7,7 @@ function movX(speed) {
 }
 
 // Set Player to initial coordinates
-function reset() {
-    player.x = 202;
-    player.y = 384.75;
-}
+
 // Draws the score
 function score() {
     ctx.font = "Bold 35px 'Ravi Prakash', cursive";
@@ -41,7 +39,7 @@ Enemy.prototype.update = function(dt) {
         player.x + 55 > this.x &&
         player.y < this.y + 55 &&
         player.y + 55 > this.y) {
-        reset();
+        player.reset();
     }
 };
 
@@ -59,39 +57,38 @@ var Player = function() {
 
 Player.prototype.update = function(dt) {
     if (this.y < 0) { // Reset player position when it reaches the water
-        reset();
-        scr += 1 // Score value update
-    }
-    // Set player position to previous position whenever it tries to get out boundaries
-    if (this.x < 0) {
-        this.x = this.x + 101;
-    }
-    if (this.x > 404) {
-        this.x = this.x - 101;
-    }
-    if (this.y >= 470.25) {
-        this.y = this.y - 85.5;
+        player.reset();
+        scr += 1; // Score value update
     }
 };
 Player.prototype.render = function() {
     ctx.drawImage(Resources.get(this.sprite), this.x, this.y);
 };
-
+Player.prototype.reset = function() {
+    this.x = 202;
+    this.y = 384.75;
+};
 Player.prototype.handleInput = function(keys) {
     var mY = 85.5; // Player movement through x coordinates
     var mX = 101; // Player movement through y coordinates
     switch (keys) {
         case 'left':
-            this.x -= mX;
+            if (this.x > 0) {
+                this.x -= mX;
+            }
             break;
         case 'up':
             this.y -= mY;
             break;
         case 'right':
-            this.x += mX;
+            if (this.x < 404) {
+                this.x += mX;
+            }
             break;
         case 'down':
-            this.y += mY;
+            if (this.y < 384.74) {
+                this.y += mY;
+            }
             break;
     }
 };
@@ -102,7 +99,7 @@ Player.prototype.handleInput = function(keys) {
 var allEnemies = [new Enemy(0, 42.75, 3), new Enemy(150, 42.75, 3), new Enemy(300, 42.75, 3), new Enemy(0, 128.25, 6),
     new Enemy(0, 213.75, 1), new Enemy(150, 213.75, 1), new Enemy(300, 213.75, 1)
 ];
-var player = new Player;
+var player = new Player();
 
 // This listens for key presses and sends the keys to your
 // Player.handleInput() method. You don't need to modify this.
