@@ -1,106 +1,101 @@
-"use strict";
 var scr = 0; // Score value
+var squareWidth = 101,
+    squareHeight = 83;
 // Simple function to determine the speed
 function movX(speed) {
-    var avg = 75;
+    var avg = 100;
     return avg * speed;
 }
-
-// Set Player to initial coordinates
-
 // Draws the score
 function score() {
     ctx.font = "Bold 35px 'Ravi Prakash', cursive";
     ctx.fillStyle = '#5dbc25';
     ctx.fillText("Score: " + scr, 195, 30);
+    console.log("yes");
 }
 
+var Character = function(x, y, imgUrl){
+  this.x = x;
+  this.y = y;
+  this.sprite = imgUrl
+}
 // Enemy
-var Enemy = function(xpos, ypos, speed) {
-    this.sprite = 'images/enemy-bug.png';
-    this.x = xpos;
-    this.y = ypos;
+var Enemy = function(x, y, speed) {
+    var imgUrl = "images/enemy-bug.png";
+    Character.call(this, x, y, imgUrl);
     this.move = movX(speed);
 };
-
+Enemy.prototype.constructor = Enemy;
 // Update the enemy's position, required method for game
 // Parameter: dt, a time delta between ticks
 Enemy.prototype.update = function(dt) {
-
-    if (dt < 1) { // Fix for rare bug that happens when you are in other tabs
+    if (dt < 0.5) { // Fix for rare bug that happens when you are in other tabs
         this.x += this.move * dt;
     }
     if (this.x > 505) { // Resets enemy position when its out of boundary
-        this.x = -100;
+        this.x = -250;
     }
-
     if (player.x < this.x + 55 // Collision detection
         &&
         player.x + 55 > this.x &&
         player.y < this.y + 55 &&
         player.y + 55 > this.y) {
-        player.reset();
+      player.reset();
     }
 };
-
 // Draw the enemy on the screen, required method for game
 Enemy.prototype.render = function() {
     ctx.drawImage(Resources.get(this.sprite), this.x, this.y);
 };
-
 // Player
-var Player = function() {
-    this.sprite = 'images/char-boy.png';
-    this.x = 202;
-    this.y = 384.75;
+var Player = function(x, y) {
+    var imgUrl = 'images/char-boy.png';
+    Character.call(this, x, y, imgUrl);
 };
-
+Player.prototype.reset = function() {
+    this.x = squareWidth*2;
+    this.y = squareHeight*4.5;
+};
 Player.prototype.update = function(dt) {
     if (this.y < 0) { // Reset player position when it reaches the water
-        player.reset();
+        this.reset();
         scr += 1; // Score value update
     }
 };
 Player.prototype.render = function() {
     ctx.drawImage(Resources.get(this.sprite), this.x, this.y);
 };
-Player.prototype.reset = function() {
-    this.x = 202;
-    this.y = 384.75;
-};
+
 Player.prototype.handleInput = function(keys) {
-    var mY = 85.5; // Player movement through x coordinates
-    var mX = 101; // Player movement through y coordinates
     switch (keys) {
         case 'left':
             if (this.x > 0) {
-                this.x -= mX;
+                this.x -= squareWidth;
             }
             break;
         case 'up':
-            this.y -= mY;
+            this.y -= squareHeight;
             break;
         case 'right':
             if (this.x < 404) {
-                this.x += mX;
+                this.x += squareWidth;
             }
             break;
         case 'down':
-            if (this.y < 384.74) {
-                this.y += mY;
+            if (this.y < 373.5) {
+                this.y += squareHeight;
             }
             break;
     }
 };
-
 // Place all enemy objects in an array called allEnemies
 // Place the player object in a variable called player
-
-var allEnemies = [new Enemy(0, 42.75, 3), new Enemy(150, 42.75, 3), new Enemy(300, 42.75, 3), new Enemy(0, 128.25, 6),
-    new Enemy(0, 213.75, 1), new Enemy(150, 213.75, 1), new Enemy(300, 213.75, 1)
-];
-var player = new Player();
-
+var position1 = squareHeight/2;
+var position2 = squareHeight*1.5;
+var position3= squareHeight*2.5;
+var allEnemies = [new Enemy(squareWidth*1, position1, 3.5), new Enemy(squareWidth*2.5, position1, 3.5), new Enemy(squareWidth*4, position1, 3.5), new Enemy(squareWidth*1, position2, 3), new Enemy(squareWidth*2, position2, 3),
+  new Enemy(squareWidth*3, position2, 3), new Enemy(0, position3, 5)];
+var player = new Player(squareWidth*2, squareHeight*4.5);
 // This listens for key presses and sends the keys to your
 // Player.handleInput() method. You don't need to modify this.
 document.addEventListener('keyup', function(e) {
@@ -110,6 +105,5 @@ document.addEventListener('keyup', function(e) {
         39: 'right',
         40: 'down'
     };
-
     player.handleInput(allowedKeys[e.keyCode]);
 });
